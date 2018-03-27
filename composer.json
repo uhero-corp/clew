@@ -1,0 +1,15 @@
+{
+    "name": "uhero/clew",
+    "description": "Command Line Execution Wrapper",
+    "require": {
+        "php": ">=5.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Clew\\": "src/Clew"
+        }
+    }
+}
