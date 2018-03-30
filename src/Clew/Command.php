@@ -2,6 +2,8 @@
 
 namespace Clew;
 
+use InvalidArgumentException;
+
 class Command
 {
     /**
@@ -24,8 +26,52 @@ class Command
      */
     public function __construct(array $arguments, array $expectedExits = [])
     {
+        $this->checkArguments($arguments);
         $this->arguments     = $arguments;
-        $this->expectedExits = $expectedExits;
+        $this->expectedExits = $this->cleanExpectedExits($expectedExits);
+    }
+
+    /**
+     * @param array $arguments
+     * @throws InvalidArgumentException
+     */
+    private function checkArguments(array $arguments)
+    {
+        if (!count($arguments)) {
+            throw new InvalidArgumentException("Command name is required.");
+        }
+    }
+
+    /**
+     * @param array $expectedExits
+     * @return int[]
+     * @throws InvalidArgumentException
+     */
+    private function cleanExpectedExits(array $expectedExits)
+    {
+        $result = [];
+        foreach ($expectedExits as $num) {
+            if (!$this->validateNumberFormat($num)) {
+                throw new InvalidArgumentException("Invalid exit code: {$num}");
+            }
+            $result[] = (int) $num;
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $num
+     * @return bool
+     */
+    private function validateNumberFormat($num)
+    {
+        if (is_int($num)) {
+            return (0 <= $num && $num < 256);
+        }
+
+        $sNum = (string) $num;
+        $iNum = (int) $num;
+        return preg_match("/\\A[0-9]+\\z/", $sNum) && $this->validateNumberFormat($iNum);
     }
 
     /**
