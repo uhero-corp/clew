@@ -4,6 +4,7 @@
         <whitelist>
             <directory>../src/Clew</directory>
             <exclude>
+                <file>../src/Clew/ArgumentFormat.php</file>
                 <file>../src/Clew/CommandException.php</file>
             </exclude>
         </whitelist>
