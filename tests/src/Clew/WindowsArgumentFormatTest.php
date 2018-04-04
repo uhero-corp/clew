@@ -1,0 +1,36 @@
+<?php
+
+namespace Clew;
+
+use PHPUnit\Framework\TestCase;
+
+/**
+ * @coversDefaultClass Clew\WindowsArgumentFormat
+ */
+class WindowsArgumentFormatTest extends TestCase
+{
+    /**
+     * @param string $str
+     * @covers ::format
+     * @covers ::<private>
+     * @dataProvider provideTestFormat
+     */
+    public function testFormat($str, $expected)
+    {
+        $obj = new WindowsArgumentFormat();
+        $this->assertSame($expected, $obj->format($str));
+    }
+
+    /**
+     * @return array
+     */
+    public function provideTestFormat()
+    {
+        return [
+            ["hogehoge", "hogehoge"],
+            ["hoge fuga", "^\"hoge fuga^\""],
+            ["abc%PATH%xyz", "abc^%PATH^%xyz"],
+            ["I say \"Hello World\"", "^\"I say \\^\"Hello World\\^\"^\""],
+        ];
+    }
+}
