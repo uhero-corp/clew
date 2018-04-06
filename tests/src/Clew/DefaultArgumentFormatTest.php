@@ -10,6 +10,18 @@ use PHPUnit\Framework\TestCase;
 class DefaultArgumentFormatTest extends TestCase
 {
     /**
+     * @covers ::getInstance
+     */
+    public function testGetInstance()
+    {
+        $obj1 = DefaultArgumentFormat::getInstance();
+        $obj2 = DefaultArgumentFormat::getInstance();
+
+        $this->assertInstanceOf(DefaultArgumentFormat::class, $obj1);
+        $this->assertSame($obj1, $obj2);
+    }
+
+    /**
      * @param string $str
      * @param string $expected
      * @covers ::format
@@ -18,7 +30,7 @@ class DefaultArgumentFormatTest extends TestCase
      */
     public function testFormat($str, $expected)
     {
-        $obj = new DefaultArgumentFormat();
+        $obj = DefaultArgumentFormat::getInstance();
         $this->assertSame($expected, $obj->format($str));
     }
 

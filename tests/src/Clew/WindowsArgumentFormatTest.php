@@ -10,6 +10,18 @@ use PHPUnit\Framework\TestCase;
 class WindowsArgumentFormatTest extends TestCase
 {
     /**
+     * @covers ::getInstance
+     */
+    public function testGetInstance()
+    {
+        $obj1 = WindowsArgumentFormat::getInstance();
+        $obj2 = WindowsArgumentFormat::getInstance();
+
+        $this->assertInstanceOf(WindowsArgumentFormat::class, $obj1);
+        $this->assertSame($obj1, $obj2);
+    }
+
+    /**
      * @param string $str
      * @covers ::format
      * @covers ::<private>
@@ -17,7 +29,7 @@ class WindowsArgumentFormatTest extends TestCase
      */
     public function testFormat($str, $expected)
     {
-        $obj = new WindowsArgumentFormat();
+        $obj = WindowsArgumentFormat::getInstance();
         $this->assertSame($expected, $obj->format($str));
     }
 

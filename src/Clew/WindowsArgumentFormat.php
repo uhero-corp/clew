@@ -8,6 +8,30 @@ namespace Clew;
 class WindowsArgumentFormat implements ArgumentFormat
 {
     /**
+     * @codeCoverageIgnore
+     */
+    private function __construct()
+    {
+    }
+
+    /**
+     * 唯一の WindowsArgumentFormat インスタンスを返します。
+     *
+     * @return WindowsArgumentFormat
+     */
+    public static function getInstance()
+    {
+        // @codeCoverageIgnoreStart
+        static $instance = null;
+        if ($instance === null) {
+            $instance = new self();
+        }
+        // @codeCoverageIgnoreEnd
+
+        return $instance;
+    }
+
+    /**
      * @param string $str
      * @return string
      */
