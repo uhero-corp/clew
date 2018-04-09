@@ -21,10 +21,17 @@ class Command
     private $expectedExits;
 
     /**
+     * コマンド名、引数、想定される終了ステータスの一覧を指定して、新しい Command インスタンスを生成します。
+     *
+     * 第 2 引数の想定される終了ステータスには、配列または 0 以上の整数を指定することができます。
+     * 整数を指定した場合、その値の終了ステータスのみを妥当とします。
+     * 配列を指定した場合、その配列の各要素の整数を妥当なステータスコードとします。
+     * 未指定または空配列を指定した場合、すべてのステータスコードを妥当とします。
+     *
      * @param string[] $arguments コマンド名とそれに続く引数の一覧です
-     * @param int[] $expectedExits 想定された終了ステータスの一覧。未指定の場合はすべてのステータスコードを許可します
+     * @param int[] $expectedExits 想定された終了ステータスの一覧 (整数または配列)
      */
-    public function __construct(array $arguments, array $expectedExits = [])
+    public function __construct(array $arguments, $expectedExits = [])
     {
         $this->checkArguments($arguments);
         $this->arguments     = $arguments;
@@ -43,12 +50,16 @@ class Command
     }
 
     /**
-     * @param array $expectedExits
+     * @param int|array $expectedExits
      * @return int[]
      * @throws InvalidArgumentException
      */
-    private function cleanExpectedExits(array $expectedExits)
+    private function cleanExpectedExits($expectedExits)
     {
+        if (!is_array($expectedExits)) {
+            return $this->cleanExpectedExits([$expectedExits]);
+        }
+
         $result = [];
         foreach ($expectedExits as $num) {
             if (!$this->validateNumberFormat($num)) {

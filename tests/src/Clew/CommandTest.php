@@ -89,7 +89,19 @@ class CommandTest extends TestCase
     }
 
     /**
+     * 第 2 引数に整数を指定した場合、要素数 1 の配列を指定した場合と同じ結果になることを確認します。
+     *
      * @covers ::__construct
+     * @covers ::cleanExpectedExits
+     */
+    public function testConstructByIntExitStatus()
+    {
+        $cmd1 = new Command(["test"], [1]);
+        $cmd2 = new Command(["test"], 1);
+        $this->assertEquals($cmd1, $cmd2);
+    }
+
+    /**
      * @covers ::getArguments
      */
     public function testGetArguments()
