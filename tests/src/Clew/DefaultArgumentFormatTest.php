@@ -48,4 +48,20 @@ class DefaultArgumentFormatTest extends TestCase
             ["\"John Smith\" <john-smith@example.com>", "\"\\\"John Smith\\\" <john-smith@example.com>\""],
         ];
     }
+
+    /**
+     * format() と同じ結果を返すことを確認します。
+     *
+     * @param string $str
+     * @param string $expected
+     * @covers ::formatFilePath
+     * @covers ::<private>
+     * @covers ::escape
+     * @dataProvider provideTestFormat
+     */
+    public function testFormatFilePath($str, $expected)
+    {
+        $obj = DefaultArgumentFormat::getInstance();
+        $this->assertSame($expected, $obj->formatFilePath($str));
+    }
 }

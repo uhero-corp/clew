@@ -41,6 +41,18 @@ class DefaultArgumentFormat implements ArgumentFormat
     }
 
     /**
+     * ファイルシステムのパスについてエスケープ処理を行います。
+     * この実装は format() と同じ結果を返します。
+     *
+     * @param string $str 処理対象のパス
+     * @return string 処理結果
+     */
+    public function formatFilePath($str)
+    {
+        return $this->format($str);
+    }
+
+    /**
      * @param string $str
      * @return string
      */

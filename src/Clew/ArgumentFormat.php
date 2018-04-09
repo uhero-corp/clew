@@ -14,4 +14,12 @@ interface ArgumentFormat
      * @return string 処理結果
      */
     public function format($str);
+
+    /**
+     * ファイルシステムのパスについてエスケープ処理を行います。
+     *
+     * @param string $str 処理対象のパス
+     * @return string 処理結果
+     */
+    public function formatFilePath($str);
 }

@@ -45,4 +45,26 @@ class WindowsArgumentFormatTest extends TestCase
             ["I say \"Hello World\"", "^\"I say \\^\"Hello World\\^\"^\""],
         ];
     }
+
+    /**
+     * @param string $str
+     * @covers ::formatFilePath
+     * @dataProvider provideTestFormatFilePath
+     */
+    public function testFormatFilePath($str, $expected)
+    {
+        $obj = WindowsArgumentFormat::getInstance();
+        $this->assertSame($expected, $obj->formatFilePath($str));
+    }
+
+    /**
+     * @return array
+     */
+    public function provideTestFormatFilePath()
+    {
+        return [
+            ["sample.txt", "\"sample.txt\""],
+            ["C:/Users/admin/sample file.txt", "\"C:\\Users\\admin\\sample file.txt\""],
+        ];
+    }
 }
