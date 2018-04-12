@@ -27,8 +27,8 @@ class DefaultExecutor extends Executor
     public function __construct(ArgumentFormat $format, $tmpDir, $encoding = null)
     {
         $this->initDir($tmpDir);
-        $this->format = $format;
-        $this->tmpDir = $tmpDir;
+        $this->format   = $format;
+        $this->tmpDir   = $tmpDir;
         $this->encoding = strlen($encoding) ? $encoding : "UTF-8";
     }
 
@@ -50,9 +50,9 @@ class DefaultExecutor extends Executor
         $log = $this->tmpDir . "/stderr.log";
         @unlink($log);
 
-        $cmd        = $this->formatCommandLine($command, $log);
-        $stdout     = [];
-        $exval      = 0;
+        $cmd    = $this->formatCommandLine($command, $log);
+        $stdout = [];
+        $exval  = 0;
         exec($cmd, $stdout, $exval);
         if (!$command->validateExitCode($exval)) {
             throw new CommandException("Unexpected exit status: {$exval}");
