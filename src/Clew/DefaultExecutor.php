@@ -15,14 +15,21 @@ class DefaultExecutor extends Executor
     private $tmpDir;
 
     /**
+     * @var string
+     */
+    private $encoding;
+
+    /**
      * @param ArgumentFormat $format
      * @param string $tmpDir
+     * @param string $encoding
      */
-    public function __construct(ArgumentFormat $format, $tmpDir)
+    public function __construct(ArgumentFormat $format, $tmpDir, $encoding = null)
     {
         $this->initDir($tmpDir);
         $this->format = $format;
         $this->tmpDir = $tmpDir;
+        $this->encoding = strlen($encoding) ? $encoding : "UTF-8";
     }
 
     /**
@@ -43,8 +50,7 @@ class DefaultExecutor extends Executor
         $log = $this->tmpDir . "/stderr.log";
         @unlink($log);
 
-        $escapedLog = $this->format->formatFilePath($log);
-        $cmd        = implode(" ", array_map([$this->format, "format"], $command->getArguments())) . " 2> {$escapedLog}";
+        $cmd        = $this->formatCommandLine($command, $log);
         $stdout     = [];
         $exval      = 0;
         exec($cmd, $stdout, $exval);
@@ -54,6 +60,18 @@ class DefaultExecutor extends Executor
 
         $stderr = $this->fetchStderr($log);
         return new CommandResult(implode(PHP_EOL, $stdout), $stderr, $exval);
+    }
+
+    /**
+     * @param Command $command
+     * @param string $log
+     * @return string
+     */
+    private function formatCommandLine(Command $command, $log)
+    {
+        $escapedLog = $this->format->formatFilePath($log);
+        $cmd        = implode(" ", array_map([$this->format, "format"], $command->getArguments())) . " 2> {$escapedLog}";
+        return ($this->encoding === "UTF-8") ? $cmd : mb_convert_encoding($cmd, $this->encoding, "UTF-8");
     }
 
     /**

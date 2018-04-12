@@ -49,6 +49,20 @@ class DefaultExecutorTest extends TestCase
      * @covers ::execute
      * @covers ::<private>
      */
+    public function testConstructWithoutEncoding()
+    {
+        $obj1 = new DefaultExecutor($this->format, $this->tmpDir);
+        $obj2 = new DefaultExecutor($this->format, $this->tmpDir, "UTF-8");
+        $obj3 = new DefaultExecutor($this->format, $this->tmpDir, "SJIS");
+        $this->assertEquals($obj1, $obj2);
+        $this->assertNotEquals($obj1, $obj3);
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::execute
+     * @covers ::<private>
+     */
     public function testExecute()
     {
         $obj    = new DefaultExecutor($this->format, $this->tmpDir);
