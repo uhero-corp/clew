@@ -7,37 +7,31 @@ abstract class Executor
     /**
      * @return Executor
      */
-    public static final function getInstance()
+    public static final function getInstance($encoding = null)
     {
-        return (substr(PHP_OS, 0, 3) === "WIN") ? self::getWindowsInstance() : self::getDefaultInstance();
+        return (substr(PHP_OS, 0, 3) === "WIN") ? self::getWindowsInstance($encoding) : self::getDefaultInstance($encoding);
     }
 
     /**
+     * @param string $encoding
      * @return DefaultExecutor
      */
-    private static function getDefaultInstance()
+    private static function getDefaultInstance($encoding)
     {
-        static $instance = null;
-        if ($instance === null) {
-            $format   = DefaultArgumentFormat::getInstance();
-            $tmpdir   = "/tmp/clew";
-            $instance = new DefaultExecutor($format, $tmpdir);
-        }
-        return $instance;
+        $format = DefaultArgumentFormat::getInstance();
+        $tmpdir = "/tmp/clew";
+        return new DefaultExecutor($format, $tmpdir, $encoding);
     }
 
     /**
+     * @param string $encoding
      * @return DefaultExecutor
      */
-    private static function getWindowsInstance()
+    private static function getWindowsInstance($encoding)
     {
-        static $instance = null;
-        if ($instance === null) {
-            $format   = WindowsArgumentFormat::getInstance();
-            $tmpdir   = "C:/Temp/clew";
-            $instance = new DefaultExecutor($format, $tmpdir);
-        }
-        return $instance;
+        $format = WindowsArgumentFormat::getInstance();
+        $tmpdir = "C:/Temp/clew";
+        return new DefaultExecutor($format, $tmpdir, $encoding);
     }
 
     /**
