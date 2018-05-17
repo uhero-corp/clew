@@ -86,4 +86,25 @@ class DefaultExecutorTest extends TestCase
         $cmd = new Command([PHP_BINARY, "{$this->testDir}/test.inc"], [0, 1]);
         $obj->execute($cmd);
     }
+
+    /**
+     * @covers ::execute
+     */
+    public function testCommandExceptionFromExecute()
+    {
+        try {
+            $obj = new DefaultExecutor($this->format, $this->tmpDir);
+            $cmd = new Command([PHP_BINARY, "{$this->testDir}/test.inc"], [0, 1]);
+            $obj->execute($cmd);
+            $this->fail();
+        } catch (CommandException $e) {
+            $this->assertSame("Unexpected exit status: 2", $e->getMessage());
+            $this->assertSame(2, $e->getCode());
+
+            $result = $e->getCommandResult();
+            $this->assertSame("Hello, World!" . PHP_EOL . "test output", $result->getOutput());
+            $this->assertSame("Hello, World!" . PHP_EOL . "test error", $result->getError());
+            $this->assertSame(2, $result->getExitStatus());
+        }
+    }
 }

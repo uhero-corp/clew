@@ -51,15 +51,20 @@ class DefaultExecutor extends Executor
         @unlink($log);
 
         $cmd    = $this->formatCommandLine($command, $log);
-        $stdout = [];
+        $output = [];
         $exval  = 0;
-        exec($cmd, $stdout, $exval);
-        if (!$command->validateExitCode($exval)) {
-            throw new CommandException("Unexpected exit status: {$exval}");
-        }
-
+        exec($cmd, $output, $exval);
+        $stdout = implode(PHP_EOL, $output);
         $stderr = $this->fetchStderr($log);
-        return new CommandResult(implode(PHP_EOL, $stdout), $stderr, $exval);
+        $result = new CommandResult($stdout, $stderr, $exval);
+
+        if (!$command->validateExitCode($exval)) {
+            $e = new CommandException("Unexpected exit status: {$exval}", $exval);
+            $e->setCommandLine($cmd);
+            $e->setCommandResult($result);
+            throw $e;
+        }
+        return $result;
     }
 
     /**
