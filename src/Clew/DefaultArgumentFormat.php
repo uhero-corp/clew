@@ -37,6 +37,9 @@ class DefaultArgumentFormat implements ArgumentFormat
      */
     public function format($str)
     {
+        if ($str === "") {
+            return '""';
+        }
         return preg_match("/\\s/s", $str) ? '"' . $this->escapeQuote($str) . '"' : $this->escape($str);
     }
 
