@@ -35,6 +35,19 @@ class CommandTest extends TestCase
     }
 
     /**
+     * 数値, true, false, null などの値が文字列に変換されることを確認します。
+     *
+     * @covers ::__construct
+     * @covers ::cleanArguments
+     */
+    public function testConstructByScalar()
+    {
+        $obj1     = new Command([2, -3, true, false, null]);
+        $expected = ["2", "-3", "1", "", ""];
+        $this->assertSame($expected, $obj1->getArguments());
+    }
+
+    /**
      * 第 2 引数の配列内に 0 以上 255 以下の整数以外の値を指定された場合、
      * 例外が発生することを確認します。
      *

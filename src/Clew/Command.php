@@ -33,20 +33,21 @@ class Command
      */
     public function __construct(array $arguments, $expectedExits = [])
     {
-        $this->checkArguments($arguments);
-        $this->arguments     = $arguments;
+        $this->arguments     = $this->cleanArguments($arguments);
         $this->expectedExits = $this->cleanExpectedExits($expectedExits);
     }
 
     /**
-     * @param array $arguments
+     * @param string[] $arguments
+     * @return string[]
      * @throws InvalidArgumentException
      */
-    private function checkArguments(array $arguments)
+    private function cleanArguments(array $arguments)
     {
         if (!count($arguments)) {
             throw new InvalidArgumentException("Command name is required.");
         }
+        return array_map("strval", $arguments);
     }
 
     /**
