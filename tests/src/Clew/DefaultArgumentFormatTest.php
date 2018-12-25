@@ -40,6 +40,7 @@ class DefaultArgumentFormatTest extends TestCase
     public function provideTestFormat()
     {
         return [
+            ["", "\"\""],
             ["test", "test"],
             ["John Smith", "\"John Smith\""],
             ["\"John Smith\"", "\"\\\"John Smith\\\"\""],

@@ -37,6 +37,9 @@ class WindowsArgumentFormat implements ArgumentFormat
      */
     public function format($str)
     {
+        if ($str === "") {
+            return '""';
+        }
         $escaped = $this->escape($str);
         return preg_match("/\\s/s", $str) ? '^"' . $escaped . '^"' : $escaped;
     }

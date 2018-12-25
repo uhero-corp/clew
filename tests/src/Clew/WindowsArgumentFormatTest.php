@@ -39,6 +39,7 @@ class WindowsArgumentFormatTest extends TestCase
     public function provideTestFormat()
     {
         return [
+            ["", "\"\""],
             ["hogehoge", "hogehoge"],
             ["hoge fuga", "^\"hoge fuga^\""],
             ["abc%PATH%xyz", "abc^%PATH^%xyz"],
