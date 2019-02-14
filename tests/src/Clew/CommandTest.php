@@ -16,7 +16,7 @@ class CommandTest extends TestCase
      * @covers ::__construct
      * @covers ::checkArguments
      */
-    public function testConstructFailByEmptyArguments()
+    public function testConstructFailByEmptyArguments(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Command([]);
@@ -28,7 +28,7 @@ class CommandTest extends TestCase
      * @covers ::__construct
      * @covers ::checkArguments
      */
-    public function testConstructSuucess()
+    public function testConstructSuucess(): void
     {
         $this->expectNotToPerformAssertions();
         new Command(["test"]);
@@ -40,7 +40,7 @@ class CommandTest extends TestCase
      * @covers ::__construct
      * @covers ::cleanArguments
      */
-    public function testConstructByScalar()
+    public function testConstructByScalar(): void
     {
         $obj1     = new Command([2, -3, true, false, null]);
         $expected = ["2", "-3", "1", "", ""];
@@ -56,7 +56,7 @@ class CommandTest extends TestCase
      * @covers ::__construct
      * @covers ::<private>
      */
-    public function testConstructByInvalidExitStatus($num)
+    public function testConstructByInvalidExitStatus($num): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Command(["test"], [0, 1, $num, 2]);
@@ -65,7 +65,7 @@ class CommandTest extends TestCase
     /**
      * @return array
      */
-    public function provideTestConstructByInvalidExitStatus()
+    public function provideTestConstructByInvalidExitStatus(): array
     {
         return [
             ["hoge"],
@@ -83,7 +83,7 @@ class CommandTest extends TestCase
      * @covers ::__construct
      * @covers ::<private>
      */
-    public function testConstructByValidExitStatus($num)
+    public function testConstructByValidExitStatus($num): void
     {
         $this->expectNotToPerformAssertions();
         new Command(["test"], [3, 4, 5, $num]);
@@ -92,7 +92,7 @@ class CommandTest extends TestCase
     /**
      * @return array
      */
-    public function provideTestConstructByValidExitStatus()
+    public function provideTestConstructByValidExitStatus(): array
     {
         return [
             [0],
@@ -107,7 +107,7 @@ class CommandTest extends TestCase
      * @covers ::__construct
      * @covers ::cleanExpectedExits
      */
-    public function testConstructByIntExitStatus()
+    public function testConstructByIntExitStatus(): void
     {
         $cmd1 = new Command(["test"], [1]);
         $cmd2 = new Command(["test"], 1);
@@ -117,7 +117,7 @@ class CommandTest extends TestCase
     /**
      * @covers ::getArguments
      */
-    public function testGetArguments()
+    public function testGetArguments(): void
     {
         $obj = new Command(["test", "aaa", "bbb", "ccc"]);
         $this->assertSame(["test", "aaa", "bbb", "ccc"], $obj->getArguments());
@@ -131,7 +131,7 @@ class CommandTest extends TestCase
      * @covers ::__construct
      * @covers ::validateExitCode
      */
-    public function testValidateExitCode(array $expectedExits, $code, $expected)
+    public function testValidateExitCode(array $expectedExits, $code, $expected): void
     {
         $obj = new Command(["test"], $expectedExits);
         $this->assertSame($expected, $obj->validateExitCode($code));
@@ -140,7 +140,7 @@ class CommandTest extends TestCase
     /**
      * @return array
      */
-    public function provideTestValidateExitCode()
+    public function provideTestValidateExitCode(): array
     {
         return [
             [[], 127, true],

@@ -12,7 +12,7 @@ class WindowsArgumentFormatTest extends TestCase
     /**
      * @covers ::getInstance
      */
-    public function testGetInstance()
+    public function testGetInstance(): void
     {
         $obj1 = WindowsArgumentFormat::getInstance();
         $obj2 = WindowsArgumentFormat::getInstance();
@@ -27,7 +27,7 @@ class WindowsArgumentFormatTest extends TestCase
      * @covers ::<private>
      * @dataProvider provideTestFormat
      */
-    public function testFormat($str, $expected)
+    public function testFormat($str, $expected): void
     {
         $obj = WindowsArgumentFormat::getInstance();
         $this->assertSame($expected, $obj->format($str));
@@ -36,7 +36,7 @@ class WindowsArgumentFormatTest extends TestCase
     /**
      * @return array
      */
-    public function provideTestFormat()
+    public function provideTestFormat(): array
     {
         return [
             ["", "\"\""],
@@ -52,7 +52,7 @@ class WindowsArgumentFormatTest extends TestCase
      * @covers ::formatFilePath
      * @dataProvider provideTestFormatFilePath
      */
-    public function testFormatFilePath($str, $expected)
+    public function testFormatFilePath($str, $expected): void
     {
         $obj = WindowsArgumentFormat::getInstance();
         $this->assertSame($expected, $obj->formatFilePath($str));
@@ -61,7 +61,7 @@ class WindowsArgumentFormatTest extends TestCase
     /**
      * @return array
      */
-    public function provideTestFormatFilePath()
+    public function provideTestFormatFilePath(): array
     {
         return [
             ["sample.txt", "\"sample.txt\""],

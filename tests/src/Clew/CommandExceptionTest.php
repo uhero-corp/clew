@@ -13,7 +13,7 @@ class CommandExceptionTest extends TestCase
      * @covers ::setCommandLine
      * @covers ::getCommandLine
      */
-    public function testAccessCommandLine()
+    public function testAccessCommandLine(): void
     {
         $obj = new CommandException("Command failed", 1);
         $obj->setCommandLine("test.sh -n 123");
@@ -24,7 +24,7 @@ class CommandExceptionTest extends TestCase
      * @covers ::setCommandResult
      * @covers ::getCommandResult
      */
-    public function testAccessCommandResult()
+    public function testAccessCommandResult(): void
     {
         $obj    = new CommandException("Command failed", 1);
         $result = new CommandResult("", "Invalid value", 1);

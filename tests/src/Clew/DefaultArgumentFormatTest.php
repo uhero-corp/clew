@@ -12,7 +12,7 @@ class DefaultArgumentFormatTest extends TestCase
     /**
      * @covers ::getInstance
      */
-    public function testGetInstance()
+    public function testGetInstance(): void
     {
         $obj1 = DefaultArgumentFormat::getInstance();
         $obj2 = DefaultArgumentFormat::getInstance();
@@ -28,7 +28,7 @@ class DefaultArgumentFormatTest extends TestCase
      * @covers ::<private>
      * @dataProvider provideTestFormat
      */
-    public function testFormat($str, $expected)
+    public function testFormat($str, $expected): void
     {
         $obj = DefaultArgumentFormat::getInstance();
         $this->assertSame($expected, $obj->format($str));
@@ -37,7 +37,7 @@ class DefaultArgumentFormatTest extends TestCase
     /**
      * @return array
      */
-    public function provideTestFormat()
+    public function provideTestFormat(): array
     {
         return [
             ["", "\"\""],
@@ -60,9 +60,10 @@ class DefaultArgumentFormatTest extends TestCase
      * @covers ::escape
      * @dataProvider provideTestFormat
      */
-    public function testFormatFilePath($str, $expected)
+    public function testFormatFilePath($str, $expected): void
     {
         $obj = DefaultArgumentFormat::getInstance();
         $this->assertSame($expected, $obj->formatFilePath($str));
     }
+
 }
