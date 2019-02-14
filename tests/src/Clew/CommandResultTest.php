@@ -13,7 +13,7 @@ class CommandResultTest extends TestCase
      * @covers ::__construct
      * @covers ::getOutput
      */
-    public function testGetOutput()
+    public function testGetOutput(): void
     {
         $obj = new CommandResult("test");
         $this->assertSame("test", $obj->getOutput());
@@ -23,7 +23,7 @@ class CommandResultTest extends TestCase
      * @covers ::__construct
      * @covers ::getError
      */
-    public function testGetError()
+    public function testGetError(): void
     {
         $obj1 = new CommandResult("test");
         $this->assertSame("", $obj1->getError());
@@ -36,7 +36,7 @@ class CommandResultTest extends TestCase
      * @covers ::__construct
      * @covers ::getExitStatus
      */
-    public function testGetExitStatus()
+    public function testGetExitStatus(): void
     {
         $obj1 = new CommandResult("test");
         $this->assertSame(0, $obj1->getExitStatus());

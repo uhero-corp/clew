@@ -39,7 +39,7 @@ class DefaultExecutorTest extends TestCase
         }
 
         $this->format  = (substr(PHP_OS, 0, 3) === "WIN") ?
-                WindowsArgumentFormat::getInstance() : DefaultArgumentFormat::getInstance();
+            WindowsArgumentFormat::getInstance() : DefaultArgumentFormat::getInstance();
         $this->testDir = $testDir;
         $this->tmpDir  = $tmpDir;
     }
@@ -49,7 +49,7 @@ class DefaultExecutorTest extends TestCase
      * @covers ::execute
      * @covers ::<private>
      */
-    public function testConstructWithoutEncoding()
+    public function testConstructWithoutEncoding(): void
     {
         $obj1 = new DefaultExecutor($this->format, $this->tmpDir);
         $obj2 = new DefaultExecutor($this->format, $this->tmpDir, "UTF-8");
@@ -63,7 +63,7 @@ class DefaultExecutorTest extends TestCase
      * @covers ::execute
      * @covers ::<private>
      */
-    public function testExecute()
+    public function testExecute(): void
     {
         $obj    = new DefaultExecutor($this->format, $this->tmpDir);
         $cmd    = new Command([PHP_BINARY, "{$this->testDir}/test.inc"], 2);
@@ -79,7 +79,7 @@ class DefaultExecutorTest extends TestCase
     /**
      * @covers ::execute
      */
-    public function testExecuteFailByUnexpectedExitStatus()
+    public function testExecuteFailByUnexpectedExitStatus(): void
     {
         $this->expectException(CommandException::class);
         $obj = new DefaultExecutor($this->format, $this->tmpDir);
@@ -90,7 +90,7 @@ class DefaultExecutorTest extends TestCase
     /**
      * @covers ::execute
      */
-    public function testCommandExceptionFromExecute()
+    public function testCommandExceptionFromExecute(): void
     {
         try {
             $obj = new DefaultExecutor($this->format, $this->tmpDir);
