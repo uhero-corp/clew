@@ -160,4 +160,24 @@ class CommandTest extends TestCase
             [[0, 1, 2], 127, false],
         ];
     }
+
+    /**
+     * @covers ::__construct
+     * @covers ::pipeTo
+     */
+    public function testPipeTo(): void
+    {
+        $expected = [
+            new Token("ls", false),
+            new Token("-la", false),
+            new Token("|", true),
+            new Token("grep", false),
+            new Token(".txt", false),
+        ];
+
+        $c1 = new Command(["ls", "-la"]);
+        $c2 = new Command(["grep", ".txt"]);
+        $c3 = $c1->pipeTo($c2);
+        $this->assertEquals($expected, $c3->getArguments());
+    }
 }

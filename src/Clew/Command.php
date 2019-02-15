@@ -113,4 +113,17 @@ class Command
 
         return in_array($code, $this->expectedExits);
     }
+
+    /**
+     * このコマンドと引数のコマンドをパイプで連結し、結果を新しい Command オブジェクトとして返します。
+     *
+     * @param Command $next 連結先のコマンド
+     * @return Command
+     */
+    public function pipeTo(Command $next)
+    {
+        $result = clone $next;
+        $result->arguments = array_merge($this->arguments, [new Token("|", true)], $next->arguments);
+        return $result;
+    }
 }
