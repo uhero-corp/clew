@@ -42,9 +42,15 @@ class CommandTest extends TestCase
      */
     public function testConstructByScalar(): void
     {
+        $expected = [
+            new Token("2", false),
+            new Token("-3", false),
+            new Token("1", false),
+            new Token("", false),
+            new Token("", false),
+        ];
         $obj1     = new Command([2, -3, true, false, null]);
-        $expected = ["2", "-3", "1", "", ""];
-        $this->assertSame($expected, $obj1->getArguments());
+        $this->assertEquals($expected, $obj1->getArguments());
     }
 
     /**
@@ -119,8 +125,14 @@ class CommandTest extends TestCase
      */
     public function testGetArguments(): void
     {
+        $expected = [
+            new Token("test", false),
+            new Token("aaa", false),
+            new Token("bbb", false),
+            new Token("ccc", false),
+        ];
         $obj = new Command(["test", "aaa", "bbb", "ccc"]);
-        $this->assertSame(["test", "aaa", "bbb", "ccc"], $obj->getArguments());
+        $this->assertEquals($expected, $obj->getArguments());
     }
 
     /**

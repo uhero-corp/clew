@@ -74,8 +74,12 @@ class DefaultExecutor extends Executor
      */
     private function formatCommandLine(Command $command, $log)
     {
+        $format     = $this->format;
+        $getArg     = function (Token $t) use ($format) {
+            return $t->format($format);
+        };
         $escapedLog = $this->format->formatFilePath($log);
-        $cmd        = implode(" ", array_map([$this->format, "format"], $command->getArguments())) . " 2> {$escapedLog}";
+        $cmd        = implode(" ", array_map($getArg, $command->getArguments())) . " 2> {$escapedLog}";
         return ($this->encoding === "UTF-8") ? $cmd : mb_convert_encoding($cmd, $this->encoding, "UTF-8");
     }
 

@@ -9,7 +9,7 @@ class Command
     /**
      * コマンド名とその引数の一覧です
      *
-     * @var string[]
+     * @var Token[]
      */
     private $arguments;
 
@@ -39,7 +39,7 @@ class Command
 
     /**
      * @param string[] $arguments
-     * @return string[]
+     * @return Token[]
      * @throws InvalidArgumentException
      */
     private function cleanArguments(array $arguments)
@@ -47,7 +47,10 @@ class Command
         if (!count($arguments)) {
             throw new InvalidArgumentException("Command name is required.");
         }
-        return array_map("strval", $arguments);
+        $createToken = function ($value) {
+            return new Token((string) $value, false);
+        };
+        return array_map($createToken, $arguments);
     }
 
     /**
@@ -89,7 +92,7 @@ class Command
     /**
      * コマンド名およびその引数の一覧を返します。
      *
-     * @return string[]
+     * @return Token[]
      */
     public function getArguments()
     {
