@@ -21,6 +21,13 @@ class Command
     private $expectedExits;
 
     /**
+     * このコマンドが標準エラー出力をリダイレクトしている場合に true となります
+     *
+     * @var bool
+     */
+    private $hasStdErr;
+
+    /**
      * 標準入力へのリダイレクトをあらわします
      *
      * @var int
@@ -56,6 +63,7 @@ class Command
     {
         $this->arguments     = $this->cleanArguments($arguments);
         $this->expectedExits = $this->cleanExpectedExits($expectedExits);
+        $this->hasStdErr     = false;
     }
 
     /**
@@ -178,6 +186,17 @@ class Command
         $symbol  = $symbols[$t][$a];
         $result  = clone $this;
         $result->arguments = array_merge($this->arguments, [new Token($symbol, true), new Token($path, false)]);
+        $result->hasStdErr = $result->hasStdErr || ($t === self::REDIRECT_STDERR);
         return $result;
+    }
+
+    /**
+     * このコマンドが標準エラー出力をリダイレクトしているかどうか調べます。
+     *
+     * @return bool 標準エラー出力をリダイレクトしている場合のみ true
+     */
+    public function hasStdErr()
+    {
+        return $this->hasStdErr;
     }
 }

@@ -246,4 +246,38 @@ class CommandTest extends TestCase
         $c1 = new Command(["somecmd"]);
         $c1->redirectTo("/path/to/file", 123);
     }
+
+    /**
+     * @param Command $c
+     * @param bool $expected
+     * @covers ::__construct
+     * @covers ::redirectTo
+     * @covers ::hasStdErr
+     * @dataProvider provideTestHasStdErr
+     */
+    public function testHasStdErr(Command $c, $expected): void
+    {
+        $this->assertSame($expected, $c->hasStdErr());
+    }
+
+    /**
+     * @return array
+     */
+    public function provideTestHasStdErr(): array
+    {
+        $c1 = new Command(["somecmd"]);
+        $c2 = $c1->redirectTo("/path/to/out.log", Command::REDIRECT_STDOUT);
+        $c3 = $c1->redirectTo("/path/to/err.log", Command::REDIRECT_STDERR);
+        $c4 = $c2->redirectTo("/path/to/err.log", Command::REDIRECT_STDERR);
+        $c5 = $c3->redirectTo("/path/to/out.log", Command::REDIRECT_STDOUT);
+        $c6 = $c1->redirectTo("/path/to/in.txt", Command::REDIRECT_STDIN);
+        return [
+            [$c1, false],
+            [$c2, false],
+            [$c3, true],
+            [$c4, true],
+            [$c5, true],
+            [$c6, false],
+        ];
+    }
 }
