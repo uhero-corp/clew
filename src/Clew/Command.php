@@ -21,6 +21,27 @@ class Command
     private $expectedExits;
 
     /**
+     * 標準入力へのリダイレクトをあらわします
+     *
+     * @var int
+     */
+    const REDIRECT_STDIN  = 0;
+
+    /**
+     * 標準出力へのリダイレクトをあらわします
+     *
+     * @var int
+     */
+    const REDIRECT_STDOUT = 1;
+
+    /**
+     * 標準エラー出力へのリダイレクトをあらわします
+     *
+     * @var int
+     */
+    const REDIRECT_STDERR = 2;
+
+    /**
      * コマンド名、引数、想定される終了ステータスの一覧を指定して、新しい Command インスタンスを生成します。
      *
      * 第 2 引数の想定される終了ステータスには、配列または 0 以上の整数を指定することができます。
@@ -124,6 +145,39 @@ class Command
     {
         $result = clone $next;
         $result->arguments = array_merge($this->arguments, [new Token("|", true)], $next->arguments);
+        return $result;
+    }
+
+    /**
+     * 指定されたファイルへのリダイレクト (または指定されたファイルから標準入力へのリダイレクト) を行う Command オブジェクトを生成します。
+     *
+     * @param string $path リダイレクト対象のファイル
+     * @param int $type リダイレクトの種類。デフォルトは標準出力
+     * @param bool $appending 指定ファイルの末尾に追記する場合は true (ただし標準入力の場合は無視されます)
+     * @return Command
+     */
+    public function redirectTo($path, $type = 1, $appending = false)
+    {
+        $t = (int) $type;
+        $a = (bool) $appending;
+
+        $validTypes = [
+            self::REDIRECT_STDIN,
+            self::REDIRECT_STDOUT,
+            self::REDIRECT_STDERR,
+        ];
+        if (!in_array($t, $validTypes)) {
+            throw new InvalidArgumentException("Invalid redirect type: '{$type}'");
+        }
+
+        $symbols = [
+            self::REDIRECT_STDIN  => ["<", "<"],
+            self::REDIRECT_STDOUT => [">", ">>"],
+            self::REDIRECT_STDERR => ["2>", "2>>"],
+        ];
+        $symbol  = $symbols[$t][$a];
+        $result  = clone $this;
+        $result->arguments = array_merge($this->arguments, [new Token($symbol, true), new Token($path, false)]);
         return $result;
     }
 }

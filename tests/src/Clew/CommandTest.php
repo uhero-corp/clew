@@ -180,4 +180,70 @@ class CommandTest extends TestCase
         $c3 = $c1->pipeTo($c2);
         $this->assertEquals($expected, $c3->getArguments());
     }
+
+    /**
+     * @param int $type
+     * @param bool $appending
+     * @param string $symbol
+     * @dataProvider provideTestRedirectTo
+     * @covers ::__construct
+     * @covers ::redirectTo
+     */
+    public function testRedirectTo($type, $appending, $symbol): void
+    {
+        $expected = [
+            new Token("somecmd", false),
+            new Token("arg1", false),
+            new Token("arg2", false),
+            new Token($symbol, true),
+            new Token("/path/to/file", false),
+        ];
+
+        $c1 = new Command(["somecmd", "arg1", "arg2"]);
+        $c2 = $c1->redirectTo("/path/to/file", $type, $appending);
+        $this->assertEquals($expected, $c2->getArguments());
+    }
+
+    /**
+     * @return array
+     */
+    public function provideTestRedirectTo(): array
+    {
+        return [
+            [Command::REDIRECT_STDIN, false, "<"],
+            [Command::REDIRECT_STDIN, true, "<"],
+            [Command::REDIRECT_STDOUT, false, ">"],
+            [Command::REDIRECT_STDOUT, true, ">>"],
+            [Command::REDIRECT_STDERR, false, "2>"],
+            [Command::REDIRECT_STDERR, true, "2>>"],
+        ];
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::redirectTo
+     */
+    public function testRedirectToByDefault(): void
+    {
+        $expected = [
+            new Token("somecmd", false),
+            new Token(">", true),
+            new Token("/path/to/file", false),
+        ];
+
+        $c1 = new Command(["somecmd"]);
+        $c2 = $c1->redirectTo("/path/to/file");
+        $this->assertEquals($expected, $c2->getArguments());
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::redirectTo
+     */
+    public function testRedirectToFailByInvalidType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $c1 = new Command(["somecmd"]);
+        $c1->redirectTo("/path/to/file", 123);
+    }
 }
