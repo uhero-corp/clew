@@ -9,7 +9,7 @@ class Command
     /**
      * コマンド名とその引数の一覧です
      *
-     * @var string[]
+     * @var Token[]
      */
     private $arguments;
 
@@ -19,6 +19,34 @@ class Command
      * @var int
      */
     private $expectedExits;
+
+    /**
+     * このコマンドが標準エラー出力をリダイレクトしている場合に true となります
+     *
+     * @var bool
+     */
+    private $hasStdErr;
+
+    /**
+     * 標準入力へのリダイレクトをあらわします
+     *
+     * @var int
+     */
+    const REDIRECT_STDIN  = 0;
+
+    /**
+     * 標準出力へのリダイレクトをあらわします
+     *
+     * @var int
+     */
+    const REDIRECT_STDOUT = 1;
+
+    /**
+     * 標準エラー出力へのリダイレクトをあらわします
+     *
+     * @var int
+     */
+    const REDIRECT_STDERR = 2;
 
     /**
      * コマンド名、引数、想定される終了ステータスの一覧を指定して、新しい Command インスタンスを生成します。
@@ -35,11 +63,12 @@ class Command
     {
         $this->arguments     = $this->cleanArguments($arguments);
         $this->expectedExits = $this->cleanExpectedExits($expectedExits);
+        $this->hasStdErr     = false;
     }
 
     /**
      * @param string[] $arguments
-     * @return string[]
+     * @return Token[]
      * @throws InvalidArgumentException
      */
     private function cleanArguments(array $arguments)
@@ -47,7 +76,10 @@ class Command
         if (!count($arguments)) {
             throw new InvalidArgumentException("Command name is required.");
         }
-        return array_map("strval", $arguments);
+        $createToken = function ($value) {
+            return new Token((string) $value, false);
+        };
+        return array_map($createToken, $arguments);
     }
 
     /**
@@ -89,7 +121,7 @@ class Command
     /**
      * コマンド名およびその引数の一覧を返します。
      *
-     * @return string[]
+     * @return Token[]
      */
     public function getArguments()
     {
@@ -109,5 +141,63 @@ class Command
         }
 
         return in_array($code, $this->expectedExits);
+    }
+
+    /**
+     * このコマンドと引数のコマンドをパイプで連結し、結果を新しい Command オブジェクトとして返します。
+     *
+     * @param Command $next 連結先のコマンド
+     * @return Command
+     */
+    public function pipeTo(Command $next)
+    {
+        $result            = clone $next;
+        $result->arguments = array_merge($this->arguments, [new Token("|", true)], $next->arguments);
+        return $result;
+    }
+
+    /**
+     * 指定されたファイルへのリダイレクト (または指定されたファイルから標準入力へのリダイレクト) を行う Command オブジェクトを生成します。
+     *
+     * @param string $path リダイレクト対象のファイル
+     * @param int $type リダイレクトの種類。デフォルトは標準出力
+     * @param bool $appending 指定ファイルの末尾に追記する場合は true (ただし標準入力の場合は無視されます)
+     * @return Command
+     */
+    public function redirectTo($path, $type = 1, $appending = false)
+    {
+        $t = (int) $type;
+        $a = (bool) $appending;
+
+        $validTypes = [
+            self::REDIRECT_STDIN,
+            self::REDIRECT_STDOUT,
+            self::REDIRECT_STDERR,
+        ];
+        if (!in_array($t, $validTypes)) {
+            throw new InvalidArgumentException("Invalid redirect type: '{$type}'");
+        }
+
+        $symbols = [
+            self::REDIRECT_STDIN  => ["<", "<"],
+            self::REDIRECT_STDOUT => [">", ">>"],
+            self::REDIRECT_STDERR => ["2>", "2>>"],
+        ];
+        $symbol  = $symbols[$t][$a];
+        $result  = clone $this;
+
+        $result->arguments = array_merge($this->arguments, [new Token($symbol, true), new Token($path, false)]);
+        $result->hasStdErr = $result->hasStdErr || ($t === self::REDIRECT_STDERR);
+        return $result;
+    }
+
+    /**
+     * このコマンドが標準エラー出力をリダイレクトしているかどうか調べます。
+     *
+     * @return bool 標準エラー出力をリダイレクトしている場合のみ true
+     */
+    public function hasStdErr()
+    {
+        return $this->hasStdErr;
     }
 }

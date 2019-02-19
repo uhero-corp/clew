@@ -42,9 +42,15 @@ class CommandTest extends TestCase
      */
     public function testConstructByScalar(): void
     {
+        $expected = [
+            new Token("2", false),
+            new Token("-3", false),
+            new Token("1", false),
+            new Token("", false),
+            new Token("", false),
+        ];
         $obj1     = new Command([2, -3, true, false, null]);
-        $expected = ["2", "-3", "1", "", ""];
-        $this->assertSame($expected, $obj1->getArguments());
+        $this->assertEquals($expected, $obj1->getArguments());
     }
 
     /**
@@ -119,8 +125,14 @@ class CommandTest extends TestCase
      */
     public function testGetArguments(): void
     {
-        $obj = new Command(["test", "aaa", "bbb", "ccc"]);
-        $this->assertSame(["test", "aaa", "bbb", "ccc"], $obj->getArguments());
+        $expected = [
+            new Token("test", false),
+            new Token("aaa", false),
+            new Token("bbb", false),
+            new Token("ccc", false),
+        ];
+        $obj      = new Command(["test", "aaa", "bbb", "ccc"]);
+        $this->assertEquals($expected, $obj->getArguments());
     }
 
     /**
@@ -146,6 +158,126 @@ class CommandTest extends TestCase
             [[], 127, true],
             [[0, 1, 2], 0, true],
             [[0, 1, 2], 127, false],
+        ];
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::pipeTo
+     */
+    public function testPipeTo(): void
+    {
+        $expected = [
+            new Token("ls", false),
+            new Token("-la", false),
+            new Token("|", true),
+            new Token("grep", false),
+            new Token(".txt", false),
+        ];
+
+        $c1 = new Command(["ls", "-la"]);
+        $c2 = new Command(["grep", ".txt"]);
+        $c3 = $c1->pipeTo($c2);
+        $this->assertEquals($expected, $c3->getArguments());
+    }
+
+    /**
+     * @param int $type
+     * @param bool $appending
+     * @param string $symbol
+     * @dataProvider provideTestRedirectTo
+     * @covers ::__construct
+     * @covers ::redirectTo
+     */
+    public function testRedirectTo($type, $appending, $symbol): void
+    {
+        $expected = [
+            new Token("somecmd", false),
+            new Token("arg1", false),
+            new Token("arg2", false),
+            new Token($symbol, true),
+            new Token("/path/to/file", false),
+        ];
+
+        $c1 = new Command(["somecmd", "arg1", "arg2"]);
+        $c2 = $c1->redirectTo("/path/to/file", $type, $appending);
+        $this->assertEquals($expected, $c2->getArguments());
+    }
+
+    /**
+     * @return array
+     */
+    public function provideTestRedirectTo(): array
+    {
+        return [
+            [Command::REDIRECT_STDIN, false, "<"],
+            [Command::REDIRECT_STDIN, true, "<"],
+            [Command::REDIRECT_STDOUT, false, ">"],
+            [Command::REDIRECT_STDOUT, true, ">>"],
+            [Command::REDIRECT_STDERR, false, "2>"],
+            [Command::REDIRECT_STDERR, true, "2>>"],
+        ];
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::redirectTo
+     */
+    public function testRedirectToByDefault(): void
+    {
+        $expected = [
+            new Token("somecmd", false),
+            new Token(">", true),
+            new Token("/path/to/file", false),
+        ];
+
+        $c1 = new Command(["somecmd"]);
+        $c2 = $c1->redirectTo("/path/to/file");
+        $this->assertEquals($expected, $c2->getArguments());
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::redirectTo
+     */
+    public function testRedirectToFailByInvalidType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $c1 = new Command(["somecmd"]);
+        $c1->redirectTo("/path/to/file", 123);
+    }
+
+    /**
+     * @param Command $c
+     * @param bool $expected
+     * @covers ::__construct
+     * @covers ::redirectTo
+     * @covers ::hasStdErr
+     * @dataProvider provideTestHasStdErr
+     */
+    public function testHasStdErr(Command $c, $expected): void
+    {
+        $this->assertSame($expected, $c->hasStdErr());
+    }
+
+    /**
+     * @return array
+     */
+    public function provideTestHasStdErr(): array
+    {
+        $c1 = new Command(["somecmd"]);
+        $c2 = $c1->redirectTo("/path/to/out.log", Command::REDIRECT_STDOUT);
+        $c3 = $c1->redirectTo("/path/to/err.log", Command::REDIRECT_STDERR);
+        $c4 = $c2->redirectTo("/path/to/err.log", Command::REDIRECT_STDERR);
+        $c5 = $c3->redirectTo("/path/to/out.log", Command::REDIRECT_STDOUT);
+        $c6 = $c1->redirectTo("/path/to/in.txt", Command::REDIRECT_STDIN);
+        return [
+            [$c1, false],
+            [$c2, false],
+            [$c3, true],
+            [$c4, true],
+            [$c5, true],
+            [$c6, false],
         ];
     }
 }
