@@ -151,7 +151,7 @@ class Command
      */
     public function pipeTo(Command $next)
     {
-        $result = clone $next;
+        $result            = clone $next;
         $result->arguments = array_merge($this->arguments, [new Token("|", true)], $next->arguments);
         return $result;
     }
@@ -185,6 +185,7 @@ class Command
         ];
         $symbol  = $symbols[$t][$a];
         $result  = clone $this;
+
         $result->arguments = array_merge($this->arguments, [new Token($symbol, true), new Token($path, false)]);
         $result->hasStdErr = $result->hasStdErr || ($t === self::REDIRECT_STDERR);
         return $result;

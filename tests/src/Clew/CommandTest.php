@@ -131,7 +131,7 @@ class CommandTest extends TestCase
             new Token("bbb", false),
             new Token("ccc", false),
         ];
-        $obj = new Command(["test", "aaa", "bbb", "ccc"]);
+        $obj      = new Command(["test", "aaa", "bbb", "ccc"]);
         $this->assertEquals($expected, $obj->getArguments());
     }
 
