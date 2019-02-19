@@ -78,8 +78,8 @@ class DefaultExecutor extends Executor
         $getArg     = function (Token $t) use ($format) {
             return $t->format($format);
         };
-        $escapedLog = $this->format->formatFilePath($log);
-        $cmd        = implode(" ", array_map($getArg, $command->getArguments())) . " 2> {$escapedLog}";
+        $stdErr     = $command->hasStdErr() ? "" : " 2> " . $this->format->formatFilePath($log);
+        $cmd        = implode(" ", array_map($getArg, $command->getArguments())) . $stdErr;
         return ($this->encoding === "UTF-8") ? $cmd : mb_convert_encoding($cmd, $this->encoding, "UTF-8");
     }
 

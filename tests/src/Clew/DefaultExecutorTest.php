@@ -77,6 +77,27 @@ class DefaultExecutorTest extends TestCase
     }
 
     /**
+     * @covers ::__construct
+     * @covers ::execute
+     * @covers ::<private>
+     */
+    public function testExecuteWithStdErr(): void
+    {
+        $outLog = "{$this->tmpDir}/custom-out.log";
+        $errLog = "{$this->tmpDir}/custom-err.log";
+        $obj    = new DefaultExecutor($this->format, $this->tmpDir);
+        $cmd1   = new Command([PHP_BINARY, "{$this->testDir}/test.inc"], 2);
+        $cmd2   = $cmd1->redirectTo($outLog)->redirectTo($errLog, Command::REDIRECT_STDERR);
+        $result = $obj->execute($cmd2);
+        $this->assertSame("", $result->getOutput());
+        $this->assertSame("", $result->getError());
+        $this->assertSame(2, $result->getExitStatus());
+
+        $this->assertSame("Hello, World!" . PHP_EOL . "test output" . PHP_EOL, file_get_contents($outLog));
+        $this->assertSame("Hello, World!" . PHP_EOL . "test error" . PHP_EOL, file_get_contents($errLog));
+    }
+
+    /**
      * @covers ::execute
      */
     public function testExecuteFailByUnexpectedExitStatus(): void
