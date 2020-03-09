@@ -5,7 +5,6 @@
             <directory>../src/Clew</directory>
             <exclude>
                 <file>../src/Clew/ArgumentFormat.php</file>
-                <file>../src/Clew/Executor.php</file>
             </exclude>
         </whitelist>
     </filter>
